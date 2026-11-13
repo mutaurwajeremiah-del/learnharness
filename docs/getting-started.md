@@ -39,7 +39,7 @@ In the desktop app, use the paperclip's **Files** or **Folder** choice, or drag 
 
 The teacher can show a local raster image or request an annotated visual based on it. Displayed/annotated pictures are saved as session-owned snapshots, so those saved results no longer depend on the original file. This does not snapshot every file attachment. Offline regression tests cover snapshot/payload behavior, not the quality of model-generated annotations.
 
-File tools are read-only but have broad filesystem access under the server's user; they are not confined to a selected folder. The sensitive-path guard blocks known credential/private locations, not all sensitive content. Review what you make available: file content read by an agent may be sent to its configured model provider. See [file-access boundaries](architecture.md#file-access-and-external-services).
+The `read`/`ls`/`find`/`grep` file tools are read-only but have broad filesystem access under the server's user; they are not confined to a selected folder. The sensitive-path guard blocks known credential/private locations, not all sensitive content. Review what you make available: file content read by an agent may be sent to its configured model provider. See [file-access boundaries](architecture.md#file-access-and-external-services). In this custom build the teaching agents can also create and edit files, but only inside the **Workspace** folder you choose — see [Workspace files](workspace-files.md).
 
 ## Extract into the graph
 

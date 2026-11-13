@@ -41,6 +41,18 @@ export const artifactRenderers: Record<string, ComponentType<ArtifactPartProps>>
 	ls: ToolCallCard,
 	find: ToolCallCard,
 	grep: ToolCallCard,
+	// The workspace file set (custom build, 2026-11): the same quiet
+	// expandable card — one-liner shows the path (rename: source → destination),
+	// full input/output on expand. The approval itself is a separate app-wide
+	// dialog (workspace-approval-dialog.tsx), not part of the card.
+	read_file: ToolCallCard,
+	list_directory: ToolCallCard,
+	write_file: ToolCallCard,
+	edit_file: ToolCallCard,
+	append_file: ToolCallCard,
+	create_directory: ToolCallCard,
+	rename_path: ToolCallCard,
+	delete_file: ToolCallCard,
 	// The practice pair (2026-10-04): the pose renders the statement ONLY
 	// (the commitment lives in the call's arguments and never renders);
 	// the conclusion carries the outcome + verdict + the reveal.

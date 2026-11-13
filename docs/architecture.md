@@ -161,6 +161,8 @@ Read-only file tools default to the server user's home, not a selected project o
 
 The **sensitive-path guard** refuses known private home locations, `.env` files, configured auth/subscription files, and recognized credential temporary files. It checks named/canonical paths and aliases; walks skip protected locations. It is path-based defense in depth, not a content scanner, sandbox, or allowed-folders setting. Other sensitive files and learning records can remain readable. See [`fs-shared.ts`](../src/agent/tools/fs-shared.ts).
 
+**Workspace write tools (custom build).** The Teacher, Practitioner and Prober additionally carry a write-capable toolset confined to one learner-chosen workspace folder, distinct from the read-only tools above. Every path passes the server-side guard in [`tools/workspace/paths.ts`](../src/agent/tools/workspace/paths.ts) (syntax, lexical and canonical containment, no symlink/junction following, protected locations); delete and overwrite block on a learner approval brokered by `src/server/workspace-approvals.ts`. See [Workspace files](workspace-files.md).
+
 File/PDF/visual images share image postprocessing. Search supports Tavily, Brave, Exa, Firecrawl, and hosted Ollama adapters; page fetching is independent and does not need a search key. Dictation mints short-lived tokens server-side and streams audio browser → Deepgram. These external effects are not isolated by a scratch data directory alone.
 
 ## Verification starting points

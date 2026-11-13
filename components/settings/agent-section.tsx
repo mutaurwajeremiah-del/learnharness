@@ -80,6 +80,7 @@ import { SettingsGroup, SettingsRow, SettingsMenuTrigger, Toggle, CommitInput } 
 import { ModelMenuList, ThinkingMenuList } from "./model-menu";
 import { ChatGPTBackgroundAccess } from "./chatgpt-connection";
 import { NativeSubscriptionBackgroundAccess } from "./subscription-connections";
+import { WorkspaceSettingsRow } from "./workspace-row";
 
 /** One slot's display identity — the tier's roster as the row hint rides
  *  with the resolved default (owner: the hint ALWAYS names the default). */
@@ -890,6 +891,7 @@ export function AgentSection({
 						</div>
 					);
 				})()}
+				<WorkspaceSettingsRow agent={agent} onSectionChange={onSectionChange} />
 				{(() => {
 					const engine = agent?.search?.engine ?? null;
 					const anyKey = SEARCH_ENGINES.some(({ id }) => engineKeys[id] === true);

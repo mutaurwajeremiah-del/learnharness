@@ -7,6 +7,7 @@ import { ActivityProvider } from "@/components/activity-dock";
 import { ServerEventsProvider } from "@/components/server-events";
 import { AppearanceProvider } from "@/components/settings/appearance";
 import UpdateBanner from "@/components/update-banner";
+import { WorkspaceApprovalDialog } from "@/components/workspace-approval-dialog";
 
 // Chrome = JetBrains Mono, teaching prose = Source Sans 3, titles = CMU
 // Serif (the bundled lh-cmu @font-face in globals.css — no CDN).
@@ -31,6 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 							<AppShell>{children}</AppShell>
 						</ActivityProvider>
 					</SidebarProvider>
+					{/* Learner approval for agent file deletes/overwrites (custom
+					    build, 2026-11): app-wide, so it appears on any page. */}
+					<WorkspaceApprovalDialog />
 				</AppearanceProvider>
 			</ServerEventsProvider>
 			{/* Auto-update banner (Wave C): fixed card, Electron-only pushes. */}

@@ -179,12 +179,14 @@ describe("the source-derived segment list", () => {
 			[
 				"system-prompt.md",
 				"prober/10-probe-doctrine.md",
+				"prober/20-workspace.md",
 				"shared/10-voice.md",
 				"shared/15-accuracy.md",
 				"shared/16-mental-model.md",
 				"shared/20-question-tools.md",
 				"shared/25-confidence.md",
 				"shared/30-learner-files.md",
+				"shared/35-workspace-files.md",
 				"shared/40-formatting.md",
 			],
 		);
@@ -419,7 +421,7 @@ describe("Practice settings API and effective prompt loading", () => {
 			assert.deepEqual(view[kind], effectivePromptSegments(kind, readSettingsRecord()?.agent?.prompts ?? {}));
 		}
 		assert.deepEqual(view.practice.map((s: { path: string }) => s.path), [
-			"practice/00-base.md", "practice/10-doctrine.md",
+			"practice/00-base.md", "practice/10-doctrine.md", "practice/20-workspace.md",
 			"shared/10-voice.md", "shared/15-accuracy.md", "shared/16-mental-model.md", "shared/40-formatting.md",
 		]);
 		assert.ok(!view.practice.some((s: { path: string }) => s.path === "system-prompt.md"));

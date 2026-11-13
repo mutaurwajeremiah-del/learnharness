@@ -102,4 +102,6 @@ Additional runtime gates have prerequisites:
 | `node scripts/smoke-web-subscriptions.mjs` | Build, no dev server running; isolated synthetic connection checks, external traffic blocked. Briefly changes/restores a source mtime to exercise reload. |
 | Other `scripts/smoke-*.mjs` | Standalone/native renderers, image workers, demo helper, compression, file paths, opening. Read each script and the [release guide](desktop-release.md) before running. |
 
+Focused workspace-file checks (custom build): `NODE_ENV=test npx tsx --test tests/workspace-fileops.test.ts tests/workspace-integration.test.ts tests/workspace-ui.test.tsx`. They use temp directories and a synthetic HOME/data/auth location and never touch a real workspace; the Windows-junction case runs only on Windows. See [Workspace files](workspace-files.md).
+
 Run checks proportionate to the change. Offline gates prove exercised contracts, not live entitlements or model-authored lesson quality.

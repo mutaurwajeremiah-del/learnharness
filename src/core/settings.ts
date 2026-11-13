@@ -37,6 +37,7 @@ import type { ChatSettings } from "./contracts/chat.ts";
 import { isSearchEngineId, type SearchEngineId } from "./search.ts";
 import { isDictationLanguage, type DictationLanguage } from "./dictation.ts";
 import { parseFileAccessSettings, type FileAccessSettings } from "./file-access.ts";
+import { parseWorkspaceSettings, type WorkspaceSettings } from "./workspace.ts";
 
 /** The schema version this code understands. Bump ONLY for breaking shape
  *  changes (a field renamed/meaning changed); pure additions never bump. */
@@ -374,6 +375,11 @@ export interface AgentSettings {
 	 *  the current policy is read per new tool call/job start. Existing
 	 *  sensitive-location/credential denials always win, not a whole-data ban. */
 	fileAccess?: FileAccessSettings;
+	/** The folder the Teacher / Practitioner / Prober may create, edit,
+	 *  rename and (with approval) delete files in (custom build, 2026-11).
+	 *  ABSENT = the built-in default workspace (core/workspace.ts). Distinct
+	 *  from fileAccess, which only governs READ-only learner sources. */
+	workspace?: WorkspaceSettings;
 }
 
 /** Markdown-rendering knobs — the bare-bones set (owner decision). */
@@ -732,6 +738,13 @@ function sanitizeAgent(raw: Record<string, unknown>): AgentSettings {
 	if (raw.fileAccess !== undefined) {
 		const parsed = parseFileAccessSettings(raw.fileAccess);
 		out.fileAccess = parsed.ok ? parsed.settings : { restricted: true, folders: [] };
+	}
+	// A malformed workspace must never decay into the default folder: the
+	// empty-root placeholder keeps it a visible, fail-closed error (the strict
+	// store reader reports it; unrelated UI writes carry it through unchanged).
+	if (raw.workspace !== undefined) {
+		const parsed = parseWorkspaceSettings(raw.workspace);
+		out.workspace = parsed.ok ? parsed.settings : { root: "" };
 	}
 	return out;
 }

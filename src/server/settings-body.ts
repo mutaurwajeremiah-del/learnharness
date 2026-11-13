@@ -32,6 +32,7 @@ import { WRITABLE_TOOL_KEYS } from "../core/pending.ts";
 import { isSearchEngineId, SEARCH_ENGINES } from "../core/search.ts";
 import { isDictationLanguage } from "../core/dictation.ts";
 import { parseFileAccessSettings } from "../core/file-access.ts";
+import { parseWorkspaceSettings } from "../core/workspace.ts";
 
 /** Parsed-or-rejected — `ok: false` carries the 400's error message. */
 export type SettingsBodyResult<T> =
@@ -218,6 +219,15 @@ export function parseAgentSettingsBody(body: unknown): SettingsBodyResult<AgentS
 			return { ok: false, error: "fileAccess.folders must be absolute on the server filesystem (or start with ~/)" };
 		}
 		settings.fileAccess = parsed.settings;
+	}
+	// Workspace folder (custom build, 2026-11): strict syntax only here —
+	// whether it exists / is writable / overlaps app data is a LIVE check
+	// (GET /api/workspace, and every tool call), not a write-time one, so a
+	// folder that is temporarily offline (OneDrive, USB) can still be saved.
+	if (raw.workspace !== undefined) {
+		const parsed = parseWorkspaceSettings(raw.workspace);
+		if (!parsed.ok) return parsed;
+		settings.workspace = parsed.settings;
 	}
 	return { ok: true, settings };
 }

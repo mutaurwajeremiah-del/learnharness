@@ -52,6 +52,11 @@ export interface ServerEvents {
 	 *  the chat; the client mirrors it by disabling the composer/dock
 	 *  submit. */
 	"compaction-changed": { chatId: string; running: boolean };
+	/** A destructive workspace operation (delete / overwrite) is waiting for
+	 *  the learner's approval, or one was answered / expired / cancelled
+	 *  (custom build, 2026-11). Fact only: the window fetches
+	 *  GET /api/workspace/approvals. */
+	"workspace-approvals-changed": Record<string, never>;
 }
 
 export type ServerEventType = keyof ServerEvents;
@@ -69,6 +74,7 @@ export const SERVER_EVENT_TYPES = [
 	"subscriptions-changed",
 	"record-changed",
 	"compaction-changed",
+	"workspace-approvals-changed",
 ] as const satisfies readonly ServerEventType[];
 
 /** One notification: the type discriminates the payload. */

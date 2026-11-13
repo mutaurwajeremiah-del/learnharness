@@ -26,12 +26,22 @@ interface ToolCallPart {
 /** The collapsed headline argument per tool: path for read/ls/show_image, pattern for
  *  find/grep — shown as given, never resolved (the absolute path lands in
  *  the expanded view when present in the output). */
+const WORKSPACE_PATH_TOOLS = new Set(["read_file", "write_file", "edit_file", "append_file", "create_directory", "delete_file"]);
+
 function headlineArg(tool: string, input: unknown): string {
 	const inp = (input ?? {}) as Record<string, unknown>;
 	if (tool === "read" || tool === "ls" || tool === "show_image") {
 		const p = typeof inp.path === "string" && inp.path.length > 0 ? inp.path : "~";
 		return p;
 	}
+	// The workspace file set (custom build, 2026-11): the collapsed line shows
+	// WHICH file an agent touched — rename shows source → destination, so a
+	// move is never ambiguous at a glance.
+	if (tool === "rename_path") {
+		return typeof inp.from === "string" && typeof inp.to === "string" ? `${inp.from} → ${inp.to}` : "";
+	}
+	if (tool === "list_directory") return typeof inp.path === "string" && inp.path.length > 0 ? inp.path : "(workspace)";
+	if (WORKSPACE_PATH_TOOLS.has(tool) && typeof inp.path === "string") return inp.path;
 	if (typeof inp.pattern === "string") return inp.pattern;
 	// list_propositions: the session id is the call's subject — the
 	// collapsed line reads "list_propositions chat_…". Shown as given
