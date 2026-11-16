@@ -22,6 +22,7 @@ import { readTool } from "./read.ts";
 import { lsTool } from "./ls.ts";
 import { findTool } from "./find.ts";
 import { grepTool } from "./grep.ts";
+import { workspaceTools } from "./workspace/tools.ts";
 import { jobTools, type JobToolContext } from "./jobs.ts";
 import { proberGraphTools, type GraphToolContext } from "./graph.ts";
 import { activeProblemOf } from "../../core/native-messages.ts";
@@ -212,6 +213,9 @@ export function practiceTools(ctx: PracticeToolContext, gate: PracticeGate = cre
 		ls: lsTool,
 		find: findTool,
 		grep: grepTool,
+		// The workspace file set (custom build, 2026-11): the practitioner
+		// creates and maintains exercise files in the learner's workspace.
+		...workspaceTools({ chatId: ctx.chatId }),
 		...(jobs?.research ? { research: jobs.research } : {}),
 		...(jobs ? { pdf: jobs.pdf! } : {}),
 		...(ctx.graph ? proberGraphTools(ctx.graph) : {}),

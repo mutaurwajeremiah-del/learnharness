@@ -40,6 +40,11 @@ export interface ServerEvents {
 	"plugins-changed": Record<string, never>;
 	/** Live-only, plugin-scoped notifications. Reconnect requires snapshot resync. */
 	"plugin-message": { pluginId: string; topic: string; data?: unknown };
+	/** A destructive workspace operation (delete / overwrite) is waiting for
+	 *  the learner's approval, or one was answered / expired / cancelled
+	 *  (custom build, 2026-11). Fact only: the window fetches
+	 *  GET /api/workspace/approvals. */
+	"workspace-approvals-changed": Record<string, never>;
 }
 
 export type ServerEventType = keyof ServerEvents;
@@ -60,6 +65,7 @@ export const SERVER_EVENT_TYPES = [
 	"side-chats-changed",
 	"plugins-changed",
 	"plugin-message",
+	"workspace-approvals-changed",
 ] as const satisfies readonly ServerEventType[];
 
 /** One notification: distribute over the vocabulary so narrowing `type`

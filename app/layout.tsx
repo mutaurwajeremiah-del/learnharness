@@ -9,6 +9,7 @@ import { ServerEventsProvider } from "@/components/server-events";
 import { AppearanceProvider } from "@/components/settings/appearance";
 import UpdateBanner from "@/components/update-banner";
 import { PluginsProvider } from "@/components/plugins";
+import { WorkspaceApprovalDialog } from "@/components/workspace-approval-dialog";
 import { readThemeBoot } from "@/src/server";
 
 // Chrome = JetBrains Mono, teaching prose = Source Sans 3, titles = CMU
@@ -46,6 +47,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 								<AppShell>{children}</AppShell>
 							</ActivityProvider>
 						</SidebarProvider>
+						{/* Learner approval for agent file deletes/overwrites (custom
+						    build, 2026-11): app-wide, so it appears on any page. */}
+						<WorkspaceApprovalDialog />
 					</AppearanceProvider>
 				</PluginsProvider>
 			</ServerEventsProvider>

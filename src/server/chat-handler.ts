@@ -30,6 +30,9 @@ import {
 import { runPiTurn } from "./pi/ui-stream.ts";
 import { setFileAccessPolicy } from "../agent/tools/file-access.ts";
 import { fileAccessPolicy } from "./file-access.ts";
+import { setWorkspaceApprovalBroker, setWorkspacePolicy } from "../agent/tools/workspace/policy.ts";
+import { workspacePolicy } from "./workspace.ts";
+import { workspaceApprovalBroker } from "./workspace-approvals.ts";
 import { collectToolCallIds } from "./pi/call-ids.ts";
 import { providerEventNote } from "../agent/provider-events.ts";
 import { effectiveSettings, stores } from "./stores.ts";
@@ -179,6 +182,11 @@ setJobRespawn((jobId) => void jobRunner.runJob(jobId));
 // built in this composition root, so the seam is installed here — the
 // tools read it fresh per call (allowed folders + the app's private paths).
 setFileAccessPolicy(fileAccessPolicy);
+// Workspace file tools (custom build, 2026-11): the same composition-root
+// injection — the agent layer reads the policy fresh per tool call and
+// BLOCKS destructive operations on the approval broker's learner decision.
+setWorkspacePolicy(workspacePolicy);
+setWorkspaceApprovalBroker(workspaceApprovalBroker);
 
 /** The route-facing entry: parse {chatId, input} and run one turn. */
 export async function handleChatRequest(

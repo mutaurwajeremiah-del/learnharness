@@ -23,6 +23,11 @@ import { concludeInputObject, concludeTool, createPracticeGate, problemTool, pra
 import { composeInstructions, createPracticeAgent } from "../src/agent/teacher-agent.ts";
 import { allSegmentPaths } from "../src/agent/prompt-segments.ts";
 
+/** The workspace file set (custom build, 2026-11) — registered on the teacher,
+ *  prober and practitioner, always-on. Pinned registries list it explicitly. */
+const WS_TOOLS = ["append_file", "create_directory", "delete_file", "edit_file", "list_directory", "read_file", "rename_path", "write_file"];
+const withWs = (names: string[]): string[] => [...names, ...WS_TOOLS].sort();
+
 // ── fixtures ─────────────────────────────────────────────────────────────────
 
 const STAMPS = {
@@ -200,7 +205,7 @@ describe("the practice agent", () => {
 		const tools = practiceTools(ctxOf([]));
 		assert.deepEqual(
 			Object.keys(tools).sort(),
-			["conclude", "find", "grep", "ls", "problem", "read"],
+			withWs(["conclude", "find", "grep", "ls", "problem", "read"]),
 		);
 	});
 
@@ -213,7 +218,7 @@ describe("the practice agent", () => {
 		// not apply the teacher/prober user tool-toggle filter.
 		assert.deepEqual(
 			Object.keys(tools).sort(),
-			["conclude", "find", "grep", "list_propositions", "list_sessions", "ls", "pdf", "problem", "read", "research"],
+			withWs(["conclude", "find", "grep", "list_propositions", "list_sessions", "ls", "pdf", "problem", "read", "research"]),
 		);
 		const withSearch = practiceTools({ ...ctxOf([]), jobs: { ...jobs, searchAvailable: () => true }, graph });
 		assert.ok(withSearch.research, "a live engine also keeps research");

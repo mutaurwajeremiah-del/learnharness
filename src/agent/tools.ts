@@ -22,6 +22,7 @@ import { proberGraphTools } from "./tools/graph.ts";
 import { readTool } from "./tools/read.ts";
 import { lsTool } from "./tools/ls.ts";
 import { findTool } from "./tools/find.ts";
+import { workspaceTools } from "./tools/workspace/tools.ts";
 import { grepTool } from "./tools/grep.ts";
 import { createShowImageTool } from "./tools/show-image.ts";
 import { healToolRecord } from "./tools/heal.ts";
@@ -327,6 +328,11 @@ export function createProberTools(
 				ls: lsTool,
 				find: findTool,
 				grep: grepTool,
+				// The workspace file set (custom build, 2026-11): the prober may
+				// record learning findings in the learner's workspace folder.
+				// Always-on like the read-only set; confined + approval-gated
+				// in tools/workspace/.
+				...workspaceTools({ chatId: ctx.chatId }),
 				// Job dispatch in the probe phase (owner ruling, 2026-09-20):
 				// research + pdf are ALWAYS available in every phase — the
 				// prober can verify facts or read learner PDFs while assessing.
@@ -458,6 +464,9 @@ export function createTeacherTools(
 			ls: lsTool,
 			find: findTool,
 			grep: grepTool,
+			// The workspace file set (custom build, 2026-11): the teacher
+			// maintains learning materials in the learner's workspace folder.
+			...workspaceTools({ chatId: ctx.chatId }),
 			// The learner-image display twin of read (issue #363): teacher
 			// only, always on — it shows the learner their own file.
 			show_image: createShowImageTool(ctx),

@@ -27,6 +27,7 @@ import {
 import type { SettingsStore } from "../core/ports.ts";
 import { writeFileAtomicSync } from "./atomic-write.ts";
 import { parseFileAccessSettings, type FileAccessSettingsResult } from "../core/file-access.ts";
+import { parseWorkspaceSettings, type WorkspaceSettings } from "../core/workspace.ts";
 
 const FILE_ACCESS_ERROR = "File-access configuration cannot be read reliably. Learner-file access is blocked. Repair File access in Settings → Agent → Tools.";
 
@@ -79,6 +80,38 @@ export function readFileAccessSettings(): FileAccessSettingsResult {
 	}
 	try { return fileAccessFromRecord(JSON.parse(raw)); }
 	catch { return { ok: false, error: FILE_ACCESS_ERROR }; }
+}
+
+const WORKSPACE_ERROR = "Workspace configuration cannot be read reliably. File tools are blocked. Repair Workspace in Settings → Agent → Workspace.";
+
+export type WorkspaceStoreResult =
+	| { ok: true; settings: WorkspaceSettings | null } // null = never set → the built-in default
+	| { ok: false; error: string };
+
+/** Strict view for the file tools (custom build, 2026-11), parallel to
+ *  readFileAccessSettings: an ABSENT preference is the default workspace, but
+ *  an unreadable/corrupt settings file or a malformed workspace entry blocks
+ *  the tools with a visible error — it must never decay into "some other
+ *  folder". Never exposes raw JSON. */
+export function readWorkspaceSettings(): WorkspaceStoreResult {
+	let raw: string;
+	try { raw = fs.readFileSync(SETTINGS_FILE, "utf-8"); }
+	catch (error) {
+		return (error as NodeJS.ErrnoException).code === "ENOENT" && settingsAreAbsent()
+			? { ok: true, settings: null }
+			: { ok: false, error: WORKSPACE_ERROR };
+	}
+	let parsed: unknown;
+	try { parsed = JSON.parse(raw); }
+	catch { return { ok: false, error: WORKSPACE_ERROR }; }
+	if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return { ok: false, error: WORKSPACE_ERROR };
+	const agent = (parsed as Record<string, unknown>).agent;
+	if (agent === undefined) return { ok: true, settings: null };
+	if (!agent || typeof agent !== "object" || Array.isArray(agent)) return { ok: false, error: WORKSPACE_ERROR };
+	const value = (agent as Record<string, unknown>).workspace;
+	if (value === undefined) return { ok: true, settings: null };
+	const result = parseWorkspaceSettings(value);
+	return result.ok ? { ok: true, settings: result.settings } : { ok: false, error: WORKSPACE_ERROR };
 }
 
 /** The persisted record, or null when none exists (first boot). Runs the

@@ -90,10 +90,16 @@ describe("prober graph tools — registration", () => {
 		const tools = createProberTools({ ...baseCtx, chatStore, graphStore });
 		// The standing set (fix wave 2026-09-20: research + pdf are
 		// phase-omnipresent) plus the two graph-map readers.
+		// …and the workspace file set (custom build, 2026-11), always-on.
 		assert.deepEqual(Object.keys(tools).sort(), [
+			"append_file",
 			"ask_user_question",
+			"create_directory",
+			"delete_file",
+			"edit_file",
 			"find",
 			"grep",
+			"list_directory",
 			"list_propositions",
 			"list_sessions",
 			"ls",
@@ -101,7 +107,10 @@ describe("prober graph tools — registration", () => {
 			"probe",
 			"probe_done",
 			"read",
+			"read_file",
+			"rename_path",
 			"research",
+			"write_file",
 		]);
 	});
 });
