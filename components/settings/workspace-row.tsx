@@ -124,7 +124,7 @@ export function WorkspaceSettingsRow({
 				<span
 					data-testid="workspace-status"
 					role={line.tone === "warn" ? "alert" : "status"}
-					className={line.tone === "ok" ? "text-muted-foreground" : line.tone === "warn" ? "text-red-500" : "text-muted-foreground/70"}
+					className={line.tone === "ok" ? "text-muted-foreground" : line.tone === "warn" ? "text-error" : "text-muted-foreground/70"}
 				>
 					{line.text}
 				</span>
@@ -137,7 +137,7 @@ export function WorkspaceSettingsRow({
 				)}
 			</div>
 			<p data-testid="workspace-current" title={effective} className="truncate pl-3 font-ui text-xs text-muted-foreground/70">In use: {effective}</p>
-			{error && <p role="alert" data-testid="workspace-error" className="pl-3 text-xs text-red-500">{error}</p>}
+			{error && <p role="alert" data-testid="workspace-error" className="pl-3 text-xs text-error">{error}</p>}
 		</div>
 	);
 }

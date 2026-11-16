@@ -50,7 +50,13 @@ Write-Host "Node $nodeVersion, npm $(& npm -v)"
 # Unsigned Windows build: do not go looking for a signing certificate.
 $env:CSC_IDENTITY_AUTO_DISCOVERY = 'false'
 
-Invoke-Step 'npm ci' { npm ci }
+# A leftover NODE_ENV=production in the environment makes npm silently skip
+# devDependencies (TypeScript, tsx, electron-builder), so the build then fails
+# with "'tsc' is not recognized". Clear it for the install and the checks;
+# the build step sets it explicitly.
+Remove-Item Env:NODE_ENV -ErrorAction SilentlyContinue
+
+Invoke-Step 'npm ci (including dev dependencies)' { npm ci --include=dev }
 
 if (-not $SkipChecks) {
   Invoke-Step 'Type-check' { npm run typecheck }
@@ -85,5 +91,4 @@ Write-Host "  Path   : $($installer.FullName)"
 Write-Host "  Size   : $([math]::Round($installer.Length / 1MB, 1)) MB"
 Write-Host "  SHA-256: $hash"
 Write-Host ''
-Write-Host 'Next: close LearnHarness, run scripts\windows\backup-learnharness-data.ps1, then run the installer.'
-Write-Host 'Then open Settings > Agent > Workspace, and turn OFF automatic updates so the upstream release cannot replace this build.'
+Write-Host 'Next: scripts\windows\backup-learnharness-data.ps1 (if you have not already), then scripts\windows\install-learnharness.ps1 — it installs, verifies the install, and disables auto-update for you.'

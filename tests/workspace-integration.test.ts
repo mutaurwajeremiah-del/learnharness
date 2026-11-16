@@ -5,6 +5,7 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { after, beforeEach, describe, it } from "node:test";
+import { pathToFileURL } from "node:url";
 
 /**
  * Workspace feature, composed (custom build, 2026-11): settings persistence
@@ -102,7 +103,7 @@ describe("workspace setting: default, validation, persistence", () => {
 	it("survives an application restart — a brand-new process reads the same workspace", async () => {
 		await put("agent", { workspace: { root: workspace } });
 		const script = `
-			const { workspacePolicy, workspaceStatus } = await import(${JSON.stringify(path.resolve("src/server/workspace.ts"))});
+			const { workspacePolicy, workspaceStatus } = await import(${JSON.stringify(pathToFileURL(path.resolve("src/server/workspace.ts")).href)});
 			console.log(JSON.stringify({ policy: workspacePolicy(), status: workspaceStatus() }));
 		`;
 		const output = execFileSync(process.execPath, ["--import", "tsx", "--input-type=module", "-e", script], {
